@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElétricoFácil - Encontre Eletricistas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: #f5f5f5;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white; 
+            padding: 1.5rem; 
+            text-align: center; 
+            font-size: 24px; 
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tabs { 
+            display: flex; 
+            background: white; 
+            border-bottom: 2px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tab { 
+            flex: 1; 
+            padding: 12px; 
+            text-align: center; 
+            cursor: pointer; 
+            border: none; 
+            background: white; 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: #666;
+            transition: all 0.2s;
+        }
+        .tab:hover { background: #f5f5f5; }
+        .tab.active { 
+            color: #0066cc; 
+            border-bottom: 3px solid #0066cc;
+            margin-bottom: -2px;
+        }
+        
+        .content { 
+            padding: 1.5rem;
+            min-height: calc(100vh - 120px);
+        }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        h2, h3 { color: #333; margin-bottom: 1rem; }
+        
+        .form-group { margin-bottom: 1rem; }
+        label { 
+            display: block; 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            color: #333;
+        }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            font-size: 16px;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus, select:focus { 
+            outline: none; 
+            border-color: #0066cc; 
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+        
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: #0066cc; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        button:hover { background: #0052a3; }
+        button:active { transform: scale(0.98); }
+        
+        .card { 
+            background: white; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 1rem; 
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 12px;
+        }
+        .avatar { 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 50%; 
+            background: #0066cc; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .card-title { 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #333;
+        }
+        .card-subtitle { 
+            font-size: 13px; 
+            color: #666;
+        }
+        .rating { 
+            color: #f59e0b; 
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .location { 
+            font-size: 13px; 
+            color: #666; 
+            margin-top: 6px;
+        }
+        
+        .search-box { margin-bottom: 1.5rem; }
+        .search-box input { width: 100%; }
+        
+        .empty { 
+            text-align: center; 
+            padding: 2rem; 
+            color: #999;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .success { 
+            background: #d4edda; 
+            color: #155724; 
+            padding: 12px; 
+            border-radius: 6px; 
+            margin-bottom: 1rem;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .electrician-item { 
+            background: white; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 1rem; 
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .electrician-item:hover { 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .btn-contact {
+            background: #28a745 !important;
+            padding: 10px !important;
+            margin-top: 0 !important;
+            font-size: 14px !important;
+        }
+        .btn-contact:hover { background: #218838 !important; }
+        
+        hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
+    </style>
+</head>
+<body>
+    <div class="header">⚡ ElétricoFácil</div>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('cliente')">👤 Cliente</button>
+        <button class="tab" onclick="switchTab('eletricista')">🔧 Eletricista</button>
+    </div>
+
+    <div class="content">
+        <!-- TAB CLIENTE -->
+        <div id="cliente" class="section active">
+            <h2>Encontre um Eletricista</h2>
+            
+            <div class="search-box">
+                <label>🔍 Buscar por CEP ou localização:</label>
+                <input type="text" id="searchInput" placeholder="Ex: 01310-100 ou São Paulo" onkeyup="searchElectricians()">
+            </div>
+
+            <div id="electriciansResults">
+                <div class="empty">Digite um CEP ou localização para buscar</div>
+            </div>
+        </div>
+
+        <!-- TAB ELETRICISTA -->
+        <div id="eletricista" class="section">
+            <h2>📋 Cadastro de Eletricista</h2>
+            
+            <div id="successMessage"></div>
+
+            <form onsubmit="registerElectrician(event)">
+                <div class="form-group">
+                    <label>Nome completo *</label>
+                    <input type="text" id="name" placeholder="João da Silva" required>
+                </div>
+
+                <div class="form-group">
+                    <label>WhatsApp/Telefone *</label>
+                    <input type="text" id="phone" placeholder="(11) 99999-8888" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Localização / Bairro *</label>
+                    <input type="text" id="location" placeholder="São Paulo, SP" required>
+                </div>
+
+                <div class="form-group">
+                    <label>CEP *</label>
+                    <input type="text" id="cep" placeholder="01310-100" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Especialidades (separadas por vírgula)</label>
+                    <input type="text" id="specialties" placeholder="Instalação, Manutenção, Reparo">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição / Sobre você</label>
+                    <textarea id="description" placeholder="Experiência, anos no mercado, etc..." rows="3"></textarea>
+                </div>
+
+                <button type="submit">✓ Cadastrar-se</button>
+            </form>
+
+            <hr>
+            
+            <h3>👥 Eletricistas Cadastrados:</h3>
+            <div id="electriciansList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo iniciais
+        const initialData = [
+            {
+                id: 1,
+                name: "João Silva",
+                phone: "(11) 99999-8888",
+                location: "São Paulo, SP",
+                cep: "01310",
+                specialties: "Instalação, Manutenção, Reparo",
+                description: "20 anos de experiência em eletricidade residencial",
+                rating: 4.8,
+                reviews: 24
+            },
+            {
+                id: 2,
+                name: "Maria Santos",
+                phone: "(11) 98888-7777",
+                location: "Osasco, SP",
+                cep: "06015",
+                specialties: "Instalação predial, Segurança",
+                description: "Especialista em prédios comerciais e residenciais",
+                rating: 4.9,
+                reviews: 18
+            }
+        ];
+
+        function loadElectricians() {
+            let electricians = JSON.parse(localStorage.getItem('electricians')) || initialData;
+            localStorage.setItem('electricians', JSON.stringify(electricians));
+            return electricians;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tab === 'eletricista') {
+                displayElectricians();
+            }
+        }
+
+        function registerElectrician(e) {
+            e.preventDefault();
+            
+            const electricians = loadElectricians();
+            const newElectrician = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                cep: document.getElementById('cep').value.substring(0, 5),
+                specialties: document.getElementById('specialties').value,
+                description: document.getElementById('description').value,
+                rating: 5,
+                reviews: 0
+            };
+
+            electricians.push(newElectrician);
+            localStorage.setItem('electricians', JSON.stringify(electricians));
+
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = '<div class="success">✅ Cadastro realizado com sucesso! Você agora aparece na busca.</div>';
+            document.querySelector('form').reset();
+            
+            setTimeout(() => successDiv.innerHTML = '', 3000);
+            displayElectricians();
+        }
+
+        function searchElectricians() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const electricians = loadElectricians();
+            
+            if (!search) {
+                document.getElementById('electriciansResults').innerHTML = '<div class="empty">Digite um CEP ou localização para buscar</div>';
+                return;
+            }
+
+            const results = electricians.filter(e => 
+                e.cep.includes(search) || 
+                e.location.toLowerCase().includes(search) ||
+                e.name.toLowerCase().includes(search)
+            );
+
+            if (results.length === 0) {
+                document.getElementById('electriciansResults').innerHTML = '<div class="empty">Nenhum eletricista encontrado nesta região</div>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(e => {
+                html += `
+                    <div class="electrician-item">
+                        <div class="card-header">
+                            <div class="avatar">${e.name.charAt(0)}</div>
+                            <div style="flex: 1;">
+                                <div class="card-title">${e.name}</div>
+                                <div class="rating">⭐ ${e.rating} (${e.reviews} avaliações)</div>
+                                <div class="location">📍 ${e.location}</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                            <strong>🔧 Especialidades:</strong> ${e.specialties || 'N/A'}
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin-bottom: 12px;">
+                            ${e.description}
+                        </div>
+                        <button class="btn-contact" onclick="contactElectrician('${e.phone}', '${e.name}')">
+                            📞 Ligar / WhatsApp
+                        </button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('electriciansResults').innerHTML = html;
+        }
+
+        function displayElectricians() {
+            const electricians = loadElectricians();
+            let html = '';
+            
+            if (electricians.length === 0) {
+                html = '<div class="empty">Nenhum eletricista cadastrado ainda</div>';
+            } else {
+                electricians.forEach(e => {
+                    html += `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="avatar">${e.name.charAt(0)}</div>
+                                <div>
+                                    <div class="card-title">${e.name}</div>
+                                    <div class="rating">⭐ ${e.rating} (${e.reviews} avaliações)</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 13px; margin-top: 8px; line-height: 1.6;">
+                                <strong>📍</strong> ${e.location}<br>
+                                <strong>📞</strong> ${e.phone}<br>
+                                <strong>🔧</strong> ${e.specialties || 'Não informado'}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('electriciansList').innerHTML = html;
+        }
+
+        function contactElectrician(phone, name) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            window.open(`https://wa.me/55${cleanPhone}?text=Olá%20${name},%20encontrei%20você%20no%20ElétricoFácil!`, '_blank');
+        }
+
+        loadElectricians();
+    </script>
+</body>
+</html>
